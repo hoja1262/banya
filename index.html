@@ -207,7 +207,7 @@
           <label>태그</label>
           <div class="tag-input-wrap">
             <div class="tag-input-box" id="tag-box" onclick="document.getElementById('tag-real').focus()">
-              <input type="text" id="tag-real" class="tag-input-real" placeholder="직접 입력..." oninput="onTagInput(this.value)" onkeydown="onTagKey(event)" autocomplete="off">
+              <input type="text" id="tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onTagInput(this.value)" onkeydown="onTagKey(event)" onblur="onTagBlur(event)" autocomplete="off">
             </div>
             <div class="tag-dropdown" id="tag-dropdown"></div>
           </div>
@@ -267,7 +267,7 @@
           <label>태그</label>
           <div class="tag-input-wrap">
             <div class="tag-input-box" id="nt-tag-box" onclick="document.getElementById('nt-tag-real').focus()">
-              <input type="text" id="nt-tag-real" class="tag-input-real" placeholder="직접 입력..." oninput="onNoteTagInput(this.value)" onkeydown="onNoteTagKey(event)" autocomplete="off">
+              <input type="text" id="nt-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onNoteTagInput(this.value)" onkeydown="onNoteTagKey(event)" onblur="onNoteTagBlur(event)" autocomplete="off">
             </div>
             <div class="tag-dropdown" id="nt-tag-dropdown"></div>
           </div>
@@ -298,7 +298,7 @@
       <label>태그</label>
       <div class="tag-input-wrap">
         <div class="tag-input-box" id="edit-tag-box" onclick="document.getElementById('edit-tag-real').focus()">
-          <input type="text" id="edit-tag-real" class="tag-input-real" placeholder="태그 입력..." oninput="onEditTagInput(this.value)" onkeydown="onEditTagKey(event)" autocomplete="off">
+          <input type="text" id="edit-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onEditTagInput(this.value)" onkeydown="onEditTagKey(event)" onblur="onEditTagBlur(event)" autocomplete="off">
         </div>
         <div class="tag-dropdown" id="edit-tag-dropdown"></div>
       </div>
@@ -437,16 +437,18 @@ function renderTagPills(boxId,tags,removeFunc){
 function tagBadgeHtml(tag){return`<span class="tag-badge" style="background:${getTagColor(tag)}">${escHtml(tag)}</span>`;}
 function onTagInput(val){showTagDropdown('tag-dropdown',val,currentTags,addTag);}
 function onTagKey(e){
-  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addTag(v);}
+  if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&currentTags.length){currentTags.pop();renderTagPills('tag-box',currentTags,'removeTag');}
 }
+function onTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addTag(v);e.target.value='';}}
 function addTag(tag){tag=tag.trim();if(!tag||currentTags.includes(tag))return;currentTags.push(tag);getTagColor(tag);renderTagPills('tag-box',currentTags,'removeTag');document.getElementById('tag-real').value='';document.getElementById('tag-dropdown').classList.remove('show');}
 function removeTag(i){currentTags.splice(i,1);renderTagPills('tag-box',currentTags,'removeTag');}
 function onEditTagInput(val){showTagDropdown('edit-tag-dropdown',val,editTags,addEditTag);}
 function onEditTagKey(e){
-  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addEditTag(v);}
+  if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addEditTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&editTags.length){editTags.pop();renderTagPills('edit-tag-box',editTags,'removeEditTag');}
 }
+function onEditTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addEditTag(v);e.target.value='';}}
 function addEditTag(tag){tag=tag.trim();if(!tag||editTags.includes(tag))return;editTags.push(tag);getTagColor(tag);renderTagPills('edit-tag-box',editTags,'removeEditTag');document.getElementById('edit-tag-real').value='';document.getElementById('edit-tag-dropdown').classList.remove('show');}
 function removeEditTag(i){editTags.splice(i,1);renderTagPills('edit-tag-box',editTags,'removeEditTag');}
 function showTagDropdown(ddId,val,excludeTags,addFunc){
@@ -561,7 +563,7 @@ function renderSearchCards(linkItems,fileItems){
   const linkHtml=linkItems.map(item=>{
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
-    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div><div class="card-url" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.url)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
+    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
   }).join('');
   const fileHtml=fileItems.map(file=>{
     const isImage=file.type&&file.type.startsWith('image/');const isVideo=file.type&&file.type.startsWith('video/');
@@ -585,7 +587,7 @@ function renderCards(items){
   grid.innerHTML=items.map(item=>{
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
-    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div><div class="card-url" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.url)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
+    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
   }).join('');
 }
 function renderFiles(files){
@@ -638,9 +640,10 @@ const NOTE_CAT_ICONS={'아이디어':'💡','기획':'📋','영감':'✨','피�
 // 메모 태그 입력
 function onNoteTagInput(val){showTagDropdown('nt-tag-dropdown',val,currentNoteTags,addNoteTag);}
 function onNoteTagKey(e){
-  if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addNoteTag(v);}
+  if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addNoteTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&currentNoteTags.length){currentNoteTags.pop();renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');}
 }
+function onNoteTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addNoteTag(v);e.target.value='';}}
 function addNoteTag(tag){tag=tag.trim();if(!tag||currentNoteTags.includes(tag))return;currentNoteTags.push(tag);getTagColor(tag);renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');document.getElementById('nt-tag-real').value='';document.getElementById('nt-tag-dropdown').classList.remove('show');}
 function removeNoteTag(i){currentNoteTags.splice(i,1);renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');}
 
