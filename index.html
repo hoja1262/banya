@@ -463,23 +463,41 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('.tag-input-wrap'))document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('show'));
 });
 
-// ── 저장 ──
+// ── 저장 (낙관적 업데이트: 서버 응답 안 기다리고 즉시 화면 반영) ──
 async function saveContent(){
   const url=document.getElementById('inp-url').value.trim();
   const title=document.getElementById('inp-title').value.trim();
   const memo=document.getElementById('inp-memo').value.trim();
   const tags=currentTags.join(', ');
   if(!url||!title){showToast('URL과 제목은 필수입니다');return;}
-  const btn=document.getElementById('save-btn');btn.textContent='저장 중...';btn.disabled=true;
   const date=new Date().toISOString().slice(0,10);
+
+  // 1. 화면에 바로 추가 (서버 응답 안 기다림)
+  const newItem={url,title,tags,date,memo,_pending:true};
+  allItems.unshift(newItem);
+  if(newItem.tags)newItem.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));
+  renderFilterTags();renderCards(allItems);
+
+  // 2. 폼 즉시 비우기
+  document.getElementById('inp-url').value='';
+  document.getElementById('inp-title').value='';
+  document.getElementById('inp-memo').value='';
+  document.getElementById('auto-tags-preview').innerHTML='';
+  currentTags=[];renderTagPills('tag-box',currentTags,'removeTag');
+  showToast('✓ 저장 중...');
+
+  // 3. 백그라운드로 서버에 저장
   try{
     await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({url,title,tags,date,memo})});
-    document.getElementById('inp-url').value='';document.getElementById('inp-title').value='';document.getElementById('inp-memo').value='';
-    document.getElementById('auto-tags-preview').innerHTML='';
-    currentTags=[];renderTagPills('tag-box',currentTags,'removeTag');
-    showToast('✓ 저장되었습니다');setTimeout(loadContent,1000);
-  }catch(e){showToast('저장 실패.');}
-  btn.textContent='저장하기';btn.disabled=false;
+    // 성공: pending 플래그 제거만 (전체 리로드 안 함)
+    newItem._pending=false;
+    showToast('✓ 저장 완료');
+  }catch(e){
+    // 실패: 추가했던 항목 제거 + 토스트
+    const idx=allItems.indexOf(newItem);
+    if(idx>-1){allItems.splice(idx,1);renderCards(allItems);}
+    showToast('⚠ 저장 실패. 다시 시도해주세요');
+  }
 }
 
 // ── 불러오기 ──
