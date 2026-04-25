@@ -124,9 +124,8 @@
   .note-card-title{font-size:15px;font-weight:600;color:var(--text);flex:1;line-height:1.4;}
   .note-category-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
   .note-cat-아이디어{background:#fff0ec;color:#ff5c35;}
-  .note-cat-기획{background:#e6f9f6;color:#00b89c;}
+  .note-cat-명언{background:#e8f1ff;color:#3b82f6;}
   .note-cat-영감{background:#f3efff;color:#6c5ce7;}
-  .note-cat-피드백{background:#fef3e2;color:#f59e0b;}
   .note-cat-일반{background:var(--bg3);color:var(--text2);}
   .note-body{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-word;margin-bottom:10px;}
   .note-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
@@ -191,7 +190,7 @@
 
   <!-- 링크 탭 -->
   <div class="tab-content active" id="tab-links">
-    <div class="form-card">
+    <div class="form-card" id="add-form-card">
       <div class="form-title">새 콘텐츠 저장</div>
       <div class="form-grid">
         <div class="form-group full">
@@ -257,9 +256,8 @@
           <label>카테고리</label>
           <select id="nt-category" class="note-category-select">
             <option value="아이디어">💡 아이디어</option>
-            <option value="기획">📋 기획</option>
+            <option value="명언">💬 명언</option>
             <option value="영감">✨ 영감</option>
-            <option value="피드백">🎯 피드백</option>
             <option value="일반">📝 일반</option>
           </select>
         </div>
@@ -379,13 +377,13 @@ function closeRemind(){document.getElementById('remind-toast').classList.remove(
 
 // ── URL 자동 태그 ──
 const URL_RULES=[
-  {pattern:/youtube\.com|youtu\.be/i,tags:['유튜브','영상']},
+  {pattern:/youtube\.com|youtu\.be/i,tags:['유튜브']},
   {pattern:/instagram\.com/i,tags:['인스타그램']},
-  {pattern:/tiktok\.com/i,tags:['틱톡','영상']},
+  {pattern:/tiktok\.com/i,tags:['틱톡']},
   {pattern:/pinterest\.|pin\.it/i,tags:['핀터레스트','이미지']},
   {pattern:/twitter\.com|x\.com/i,tags:['트위터']},
   {pattern:/facebook\.com/i,tags:['페이스북']},
-  {pattern:/vimeo\.com/i,tags:['비메오','영상']},
+  {pattern:/vimeo\.com/i,tags:['비메오']},
   {pattern:/blog\.naver|naver\.com\/blog/i,tags:['블로그']},
   {pattern:/tistory\.com/i,tags:['블로그']},
   {pattern:/brunch\.co\.kr/i,tags:['브런치','블로그']},
@@ -396,7 +394,7 @@ const URL_RULES=[
   {pattern:/dribbble\.com/i,tags:['드리블','디자인']},
   {pattern:/\.gif(\?|$)/i,tags:['GIF']},
   {pattern:/\.(jpg|jpeg|png|webp|svg)(\?|$)/i,tags:['이미지']},
-  {pattern:/\.(mp4|mov|avi|webm)(\?|$)/i,tags:['영상']},
+  {pattern:/\.(mp4|mov|avi|webm)(\?|$)/i,tags:[]},
   {pattern:/\.pdf(\?|$)/i,tags:['PDF','문서']},
   {pattern:/\.(doc|docx|ppt|pptx|xls|xlsx)(\?|$)/i,tags:['문서']},
 ];
@@ -440,7 +438,14 @@ function onTagKey(e){
   if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&currentTags.length){currentTags.pop();renderTagPills('tag-box',currentTags,'removeTag');}
 }
-function onTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addTag(v);e.target.value='';}}
+function onTagBlur(e){
+  const input=e.target;
+  // 150ms 지연: 드롭다운 항목 클릭이 먼저 처리되도록
+  setTimeout(()=>{
+    const v=input.value.trim().replace(/,$/,'');
+    if(v){addTag(v);input.value='';}
+  },150);
+}
 function addTag(tag){tag=tag.trim();if(!tag||currentTags.includes(tag))return;currentTags.push(tag);getTagColor(tag);renderTagPills('tag-box',currentTags,'removeTag');document.getElementById('tag-real').value='';document.getElementById('tag-dropdown').classList.remove('show');}
 function removeTag(i){currentTags.splice(i,1);renderTagPills('tag-box',currentTags,'removeTag');}
 function onEditTagInput(val){showTagDropdown('edit-tag-dropdown',val,editTags,addEditTag);}
@@ -448,7 +453,13 @@ function onEditTagKey(e){
   if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addEditTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&editTags.length){editTags.pop();renderTagPills('edit-tag-box',editTags,'removeEditTag');}
 }
-function onEditTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addEditTag(v);e.target.value='';}}
+function onEditTagBlur(e){
+  const input=e.target;
+  setTimeout(()=>{
+    const v=input.value.trim().replace(/,$/,'');
+    if(v){addEditTag(v);input.value='';}
+  },150);
+}
 function addEditTag(tag){tag=tag.trim();if(!tag||editTags.includes(tag))return;editTags.push(tag);getTagColor(tag);renderTagPills('edit-tag-box',editTags,'removeEditTag');document.getElementById('edit-tag-real').value='';document.getElementById('edit-tag-dropdown').classList.remove('show');}
 function removeEditTag(i){editTags.splice(i,1);renderTagPills('edit-tag-box',editTags,'removeEditTag');}
 function showTagDropdown(ddId,val,excludeTags,addFunc){
@@ -538,10 +549,16 @@ function toggleFilter(tag){
 }
 
 // ── 검색 ──
+let searchTimer=null;
 function globalSearch(q){
+  clearTimeout(searchTimer);
+  searchTimer=setTimeout(()=>doSearch(q),150);
+}
+function doSearch(q){
   q=q.trim();
   if(!q){clearSearch();return;}
   const ql=q.toLowerCase();
+  document.getElementById('add-form-card').style.display='none';
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-links').classList.add('active');
@@ -576,6 +593,7 @@ function renderSearchCards(linkItems,fileItems){
 function clearSearch(){
   document.getElementById('global-search').value='';
   document.getElementById('search-banner').classList.remove('show');
+  document.getElementById('add-form-card').style.display='';
   activeTagFilter=null;renderFilterTags();renderCards(allItems);
 }
 
@@ -634,8 +652,8 @@ document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target==
 
 // ── 메모 ──
 let allNotes=[],notesLoaded=false,activeNoteCategory=null,currentNoteTags=[];
-const NOTE_CATEGORIES=['아이디어','기획','영감','피드백','일반'];
-const NOTE_CAT_ICONS={'아이디어':'💡','기획':'📋','영감':'✨','피드백':'🎯','일반':'📝'};
+const NOTE_CATEGORIES=['아이디어','명언','영감','일반'];
+const NOTE_CAT_ICONS={'아이디어':'💡','명언':'💬','영감':'✨','일반':'📝'};
 
 // 메모 태그 입력
 function onNoteTagInput(val){showTagDropdown('nt-tag-dropdown',val,currentNoteTags,addNoteTag);}
@@ -643,7 +661,13 @@ function onNoteTagKey(e){
   if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addNoteTag(v);}
   if(e.key==='Backspace'&&!e.target.value&&currentNoteTags.length){currentNoteTags.pop();renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');}
 }
-function onNoteTagBlur(e){const v=e.target.value.trim().replace(/,$/,'');if(v){addNoteTag(v);e.target.value='';}}
+function onNoteTagBlur(e){
+  const input=e.target;
+  setTimeout(()=>{
+    const v=input.value.trim().replace(/,$/,'');
+    if(v){addNoteTag(v);input.value='';}
+  },150);
+}
 function addNoteTag(tag){tag=tag.trim();if(!tag||currentNoteTags.includes(tag))return;currentNoteTags.push(tag);getTagColor(tag);renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');document.getElementById('nt-tag-real').value='';document.getElementById('nt-tag-dropdown').classList.remove('show');}
 function removeNoteTag(i){currentNoteTags.splice(i,1);renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');}
 
