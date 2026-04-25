@@ -1,6 +1,6 @@
 {
-  "name": "MUSE - 콘텐츠 저장소",
-  "short_name": "MUSE",
+  "name": "지혜의 창",
+  "short_name": "지혜의 창",
   "description": "콘텐츠 레퍼런스 아카이브",
   "start_url": "./",
   "scope": "./",
