@@ -103,13 +103,7 @@
   .tag-badge{padding:3px 8px;border-radius:20px;font-size:11px;font-weight:600;color:#fff;}
   .card-date{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;}
 
-  .file-thumb{width:100%;height:160px;border-radius:12px;margin-bottom:12px;background:var(--bg3);display:flex;align-items:center;justify-content:center;font-size:48px;overflow:hidden;cursor:pointer;border:1.5px solid var(--border);}
-  .file-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
 
-  .drive-info{background:var(--teal-soft);border:1.5px solid #b2efe6;border-radius:16px;padding:16px 20px;margin-bottom:22px;display:flex;align-items:center;gap:14px;}
-  .drive-info-text{flex:1;}
-  .drive-info-text strong{font-size:13px;color:var(--teal);display:block;margin-bottom:3px;font-weight:600;}
-  .drive-info-text span{font-size:12px;color:#3a9e8a;}
 
   /* 평가 섹션 */
 
@@ -184,7 +178,6 @@
 <main>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('links',this)">🔗 링크 / 아이디어</button>
-    <button class="tab" onclick="switchTab('files',this)">🗂 이미지 / 영상</button>
     <button class="tab" onclick="switchTab('notes',this)">📝 메모</button>
   </div>
 
@@ -230,29 +223,12 @@
   </div>
 
   <!-- 파일 탭 -->
-  <div class="tab-content" id="tab-files">
-    <div class="drive-info">
-      <div style="font-size:22px">📁</div>
-      <div class="drive-info-text">
-        <strong>"콘텐츠파일" 폴더에 파일을 넣으면 자동으로 표시됩니다</strong>
-        <span>이미지는 썸네일로 표시됩니다</span>
-      </div>
-      <a href="https://drive.google.com/drive/folders/1nw0O0wsVFhHOFo2a30xcpK0xVzeT8UB7" target="_blank" class="btn btn-ghost btn-sm">폴더 열기</a>
-    </div>
-    <div class="count-label" id="file-count-label"></div>
-    <div class="grid" id="file-grid"><div class="status-msg"><span class="loading"></span> 불러오는 중...</div></div>
-  </div>
-
   <!-- 메모 탭 -->
   <div class="tab-content" id="tab-notes">
     <div class="form-card">
       <div class="form-title">새 메모 작성</div>
       <div class="form-grid">
-        <div class="form-group">
-          <label>제목 *</label>
-          <input type="text" id="nt-title" placeholder="메모 제목">
-        </div>
-        <div class="form-group">
+        <div class="form-group full">
           <label>카테고리</label>
           <select id="nt-category" class="note-category-select">
             <option value="아이디어">💡 아이디어</option>
@@ -271,7 +247,7 @@
           </div>
         </div>
         <div class="form-group full">
-          <label>본문 *</label>
+          <label>메모 *</label>
           <textarea id="nt-body" rows="5" placeholder="생각을 자유롭게 적어주세요..."></textarea>
         </div>
       </div>
@@ -330,7 +306,7 @@ const TAG_COLORS=['#ff5c35','#00b89c','#6c5ce7','#f59e0b','#3b82f6','#ec4899','#
 const tagColorMap={};
 function getTagColor(tag){if(!tagColorMap[tag])tagColorMap[tag]=TAG_COLORS[Object.keys(tagColorMap).length%TAG_COLORS.length];return tagColorMap[tag];}
 
-let allItems=[],allFiles=[],activeTagFilter=null,filesLoaded=false,currentTags=[],editTags=[];
+let allItems=[],activeTagFilter=null,currentTags=[],editTags=[];
 
 // ── 리마인드 큐 ──
 let remindQueue=[];
@@ -420,7 +396,6 @@ function switchTab(tab,el){
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');el.classList.add('active');
-  if(tab==='files'&&!filesLoaded)loadFiles();
   if(tab==='notes')loadNotes();
 }
 
@@ -525,12 +500,6 @@ async function loadContent(){
   }catch(e){document.getElementById('content-grid').innerHTML='<div class="status-msg">불러오기 실패. 새로고침해주세요.</div>';}
 }
 
-async function loadFiles(){
-  document.getElementById('file-grid').innerHTML='<div class="status-msg"><span class="loading"></span> 불러오는 중...</div>';
-  try{const res=await fetch(API+'?action=files');allFiles=await res.json();filesLoaded=true;renderFiles(allFiles);}
-  catch(e){document.getElementById('file-grid').innerHTML='<div class="status-msg">불러오기 실패.</div>';}
-}
-
 // ── 필터 ──
 function renderFilterTags(){
   const tagMap=getTagMap();const sorted=Object.entries(tagMap).sort((a,b)=>b[1]-a[1]);
@@ -565,30 +534,20 @@ function doSearch(q){
   document.querySelector('.tab').classList.add('active');
   activeTagFilter=null;renderFilterTags();
   const linkMatches=allItems.filter(item=>(item.title||'').toLowerCase().includes(ql)||(item.tags||'').toLowerCase().includes(ql)||(item.memo||'').toLowerCase().includes(ql)||(item.url||'').toLowerCase().includes(ql));
-  const fileMatches=allFiles.filter(f=>f.name.toLowerCase().includes(ql));
-  const total=linkMatches.length+fileMatches.length;
   const banner=document.getElementById('search-banner');
-  document.getElementById('search-banner-text').textContent=`"${q}" 검색 결과 ${total}개 (링크 ${linkMatches.length}개 · 파일 ${fileMatches.length}개)`;
+  document.getElementById('search-banner-text').textContent=`"${q}" 검색 결과 ${linkMatches.length}개`;
   banner.classList.add('show');
-  renderSearchCards(linkMatches,fileMatches);
+  renderSearchCards(linkMatches);
 }
-function renderSearchCards(linkItems,fileItems){
+function renderSearchCards(linkItems){
   const grid=document.getElementById('content-grid');
-  const total=linkItems.length+fileItems.length;
-  document.getElementById('count-label').textContent=`${total}개`;
-  if(!total){grid.innerHTML='<div class="status-msg">검색 결과가 없습니다</div>';return;}
-  const linkHtml=linkItems.map(item=>{
+  document.getElementById('count-label').textContent=`${linkItems.length}개`;
+  if(!linkItems.length){grid.innerHTML='<div class="status-msg">검색 결과가 없습니다</div>';return;}
+  grid.innerHTML=linkItems.map(item=>{
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
     return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
   }).join('');
-  const fileHtml=fileItems.map(file=>{
-    const isImage=file.type&&file.type.startsWith('image/');const isVideo=file.type&&file.type.startsWith('video/');
-    const typeLabel=isImage?'IMAGE':isVideo?'VIDEO':'FILE';
-    const thumb=isImage?`<div class="file-thumb" onclick="window.open('${escHtml(file.viewUrl)}','_blank')"><img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w400" onerror="this.parentNode.innerHTML='🖼'"></div>`:`<div class="file-thumb" onclick="window.open('${escHtml(file.viewUrl)}','_blank')">${isVideo?'🎬':'📄'}</div>`;
-    return`<div class="card">${thumb}<div class="card-header"><div class="card-type">${typeLabel}</div></div><div class="card-title" onclick="window.open('${escHtml(file.viewUrl)}','_blank')">${escHtml(file.name)}</div><div class="card-footer"><div></div><div class="card-date">${file.date||''}</div></div></div>`;
-  }).join('');
-  grid.innerHTML=linkHtml+fileHtml;
 }
 function clearSearch(){
   document.getElementById('global-search').value='';
@@ -606,17 +565,6 @@ function renderCards(items){
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
     return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
-  }).join('');
-}
-function renderFiles(files){
-  const grid=document.getElementById('file-grid');
-  document.getElementById('file-count-label').textContent=`${files.length}개`;
-  if(!files.length){grid.innerHTML='<div class="status-msg">파일이 없습니다.</div>';return;}
-  grid.innerHTML=files.map(file=>{
-    const isImage=file.type&&file.type.startsWith('image/');const isVideo=file.type&&file.type.startsWith('video/');
-    const typeLabel=isImage?'IMAGE':isVideo?'VIDEO':'FILE';
-    const thumb=isImage?`<div class="file-thumb" onclick="window.open('${escHtml(file.viewUrl)}','_blank')"><img src="https://drive.google.com/thumbnail?id=${file.id}&sz=w400" onerror="this.parentNode.innerHTML='🖼'"></div>`:`<div class="file-thumb" onclick="window.open('${escHtml(file.viewUrl)}','_blank')">${isVideo?'🎬':'📄'}</div>`;
-    return`<div class="card">${thumb}<div class="card-header"><div class="card-type">${typeLabel}</div></div><div class="card-title" onclick="window.open('${escHtml(file.viewUrl)}','_blank')">${escHtml(file.name)}</div><div class="card-footer"><div></div><div class="card-date">${file.date||''}</div></div></div>`;
   }).join('');
 }
 
@@ -673,16 +621,14 @@ function removeNoteTag(i){currentNoteTags.splice(i,1);renderTagPills('nt-tag-box
 
 // 메모 저장 (구글 시트)
 async function saveNote(){
-  const title=document.getElementById('nt-title').value.trim();
   const body=document.getElementById('nt-body').value.trim();
   const category=document.getElementById('nt-category').value;
   const tags=currentNoteTags.join(', ');
-  if(!title||!body){showToast('제목과 본문은 필수입니다');return;}
+  if(!body){showToast('메모 내용을 입력해주세요');return;}
   const btn=document.getElementById('note-save-btn');btn.textContent='저장 중...';btn.disabled=true;
   const date=new Date().toISOString().slice(0,10);
   try{
-    await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveNote',title,body,category,tags,date})});
-    document.getElementById('nt-title').value='';
+    await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveNote',title:'',body,category,tags,date})});
     document.getElementById('nt-body').value='';
     document.getElementById('nt-category').value='아이디어';
     currentNoteTags=[];renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');
@@ -740,7 +686,6 @@ function renderNotes(notes){
     return `
     <div class="note-card">
       <div class="note-card-header">
-        <div class="note-card-title">${escHtml(n.title)}</div>
         <span class="note-category-badge note-cat-${cat}">${icon} ${escHtml(cat)}</span>
       </div>
       <div class="note-body">${escHtml(n.body)}</div>
