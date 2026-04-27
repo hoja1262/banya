@@ -199,7 +199,7 @@
           <label>태그</label>
           <div class="tag-input-wrap">
             <div class="tag-input-box" id="tag-box" onclick="document.getElementById('tag-real').focus()">
-              <input type="text" id="tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onTagInput(this.value)" onkeydown="onTagKey(event)" onblur="onTagBlur(event)" autocomplete="off">
+              <input type="text" id="tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onTagInput(this.value)" onkeydown="onTagKey(event)" onblur="onTagBlur(event)" onfocus="onTagInput(this.value)" autocomplete="off">
             </div>
             <div class="tag-dropdown" id="tag-dropdown"></div>
           </div>
@@ -241,7 +241,7 @@
           <label>태그</label>
           <div class="tag-input-wrap">
             <div class="tag-input-box" id="nt-tag-box" onclick="document.getElementById('nt-tag-real').focus()">
-              <input type="text" id="nt-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onNoteTagInput(this.value)" onkeydown="onNoteTagKey(event)" onblur="onNoteTagBlur(event)" autocomplete="off">
+              <input type="text" id="nt-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onNoteTagInput(this.value)" onkeydown="onNoteTagKey(event)" onblur="onNoteTagBlur(event)" onfocus="onNoteTagInput(this.value)" autocomplete="off">
             </div>
             <div class="tag-dropdown" id="nt-tag-dropdown"></div>
           </div>
@@ -272,7 +272,7 @@
       <label>태그</label>
       <div class="tag-input-wrap">
         <div class="tag-input-box" id="edit-tag-box" onclick="document.getElementById('edit-tag-real').focus()">
-          <input type="text" id="edit-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onEditTagInput(this.value)" onkeydown="onEditTagKey(event)" onblur="onEditTagBlur(event)" autocomplete="off">
+          <input type="text" id="edit-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onEditTagInput(this.value)" onkeydown="onEditTagKey(event)" onblur="onEditTagBlur(event)" onfocus="onEditTagInput(this.value)" autocomplete="off">
         </div>
         <div class="tag-dropdown" id="edit-tag-dropdown"></div>
       </div>
@@ -281,6 +281,36 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="saveEdit()">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="edit-note-modal">
+  <div class="modal">
+    <div class="modal-title">메모 수정</div>
+    <input type="hidden" id="edit-note-row">
+    <div class="modal-group">
+      <label>카테고리</label>
+      <select id="edit-nt-category" class="note-category-select">
+        <option value="아이디어">💡 아이디어</option>
+        <option value="명언">💬 명언</option>
+        <option value="영감">✨ 영감</option>
+        <option value="일반">📝 일반</option>
+      </select>
+    </div>
+    <div class="modal-group">
+      <label>태그</label>
+      <div class="tag-input-wrap">
+        <div class="tag-input-box" id="edit-nt-tag-box" onclick="document.getElementById('edit-nt-tag-real').focus()">
+          <input type="text" id="edit-nt-tag-real" class="tag-input-real" placeholder="입력 후 스페이스" oninput="onEditNoteTagInput(this.value)" onkeydown="onEditNoteTagKey(event)" onblur="onEditNoteTagBlur(event)" onfocus="onEditNoteTagInput(this.value)" autocomplete="off">
+        </div>
+        <div class="tag-dropdown" id="edit-nt-tag-dropdown"></div>
+      </div>
+    </div>
+    <div class="modal-group"><label>메모</label><textarea id="edit-nt-body" rows="5"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeNoteModal()">취소</button>
+      <button class="btn btn-primary" onclick="saveNoteEdit()">저장</button>
     </div>
   </div>
 </div>
@@ -445,7 +475,14 @@ function showTagDropdown(ddId,val,excludeTags,addFunc){
   dd.innerHTML=filtered.map(([tag,cnt])=>`<div class="tag-dropdown-item" onclick="${addFunc.name}('${tag}')"><span class="tag-dot" style="background:${getTagColor(tag)}"></span><span>${escHtml(tag)}</span><span class="tag-cnt">${cnt}</span></div>`).join('');
   dd.classList.add('show');
 }
-function getTagMap(){const m={};allItems.forEach(item=>{if(!item.tags)return;item.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>{m[t]=(m[t]||0)+1;});});return m;}
+function getTagMap(){
+  const m={};
+  allItems.forEach(item=>{if(!item.tags)return;item.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>{m[t]=(m[t]||0)+1;});});
+  if(typeof allNotes!=='undefined'){
+    allNotes.forEach(n=>{if(!n.tags)return;n.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>{m[t]=(m[t]||0)+1;});});
+  }
+  return m;
+}
 
 document.addEventListener('click',e=>{
   if(!e.target.closest('.tag-input-wrap'))document.querySelectorAll('.tag-dropdown').forEach(d=>d.classList.remove('show'));
@@ -599,7 +636,7 @@ async function saveEdit(){
 document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target===document.getElementById('edit-modal'))closeModal();});
 
 // ── 메모 ──
-let allNotes=[],notesLoaded=false,activeNoteCategory=null,currentNoteTags=[];
+let allNotes=[],notesLoaded=false,activeNoteCategory=null,currentNoteTags=[],editNoteTags=[];
 const NOTE_CATEGORIES=['아이디어','명언','영감','일반'];
 const NOTE_CAT_ICONS={'아이디어':'💡','명언':'💬','영감':'✨','일반':'📝'};
 
@@ -687,6 +724,7 @@ function renderNotes(notes){
     <div class="note-card">
       <div class="note-card-header">
         <span class="note-category-badge note-cat-${cat}">${icon} ${escHtml(cat)}</span>
+        <button class="btn btn-ghost btn-sm" onclick="openNoteEdit(${n.row})">✏️ 수정</button>
       </div>
       <div class="note-body">${escHtml(n.body)}</div>
       <div class="note-footer">
@@ -711,6 +749,49 @@ async function deleteNote(row){
     setTimeout(loadNotes,1000);
   }catch(e){showToast('삭제 실패.');}
 }
+
+// ── 메모 수정 모달 ──
+function openNoteEdit(row){
+  const n=allNotes.find(x=>x.row===row);
+  if(!n){showToast('메모를 찾을 수 없습니다');return;}
+  document.getElementById('edit-note-row').value=row;
+  document.getElementById('edit-nt-category').value=n.category||'아이디어';
+  document.getElementById('edit-nt-body').value=n.body||'';
+  editNoteTags=n.tags?n.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
+  renderTagPills('edit-nt-tag-box',editNoteTags,'removeEditNoteTag');
+  document.getElementById('edit-note-modal').classList.add('show');
+}
+function closeNoteModal(){document.getElementById('edit-note-modal').classList.remove('show');editNoteTags=[];}
+async function saveNoteEdit(){
+  const row=parseInt(document.getElementById('edit-note-row').value);
+  const body=document.getElementById('edit-nt-body').value.trim();
+  const category=document.getElementById('edit-nt-category').value;
+  const tags=editNoteTags.join(', ');
+  if(!body){showToast('메모 내용을 입력해주세요');return;}
+  try{
+    await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'updateNote',row,body,category,tags})});
+    closeNoteModal();
+    showToast('✓ 수정되었습니다');
+    setTimeout(loadNotes,1000);
+  }catch(e){showToast('수정 실패.');}
+}
+document.getElementById('edit-note-modal').addEventListener('click',e=>{if(e.target===document.getElementById('edit-note-modal'))closeNoteModal();});
+
+// 메모 수정 태그 입력
+function onEditNoteTagInput(val){showTagDropdown('edit-nt-tag-dropdown',val,editNoteTags,addEditNoteTag);}
+function onEditNoteTagKey(e){
+  if(e.key==='Enter'||e.key===','||e.key===' '){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(v)addEditNoteTag(v);}
+  if(e.key==='Backspace'&&!e.target.value&&editNoteTags.length){editNoteTags.pop();renderTagPills('edit-nt-tag-box',editNoteTags,'removeEditNoteTag');}
+}
+function onEditNoteTagBlur(e){
+  const input=e.target;
+  setTimeout(()=>{
+    const v=input.value.trim().replace(/,$/,'');
+    if(v){addEditNoteTag(v);input.value='';}
+  },150);
+}
+function addEditNoteTag(tag){tag=tag.trim();if(!tag||editNoteTags.includes(tag))return;editNoteTags.push(tag);getTagColor(tag);renderTagPills('edit-nt-tag-box',editNoteTags,'removeEditNoteTag');document.getElementById('edit-nt-tag-real').value='';document.getElementById('edit-nt-tag-dropdown').classList.remove('show');}
+function removeEditNoteTag(i){editNoteTags.splice(i,1);renderTagPills('edit-nt-tag-box',editNoteTags,'removeEditNoteTag');}
 
 // ── 유틸 ──
 function getType(url){
