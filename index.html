@@ -726,7 +726,7 @@ function renderNotes(notes){
         <span class="note-category-badge note-cat-${cat}">${icon} ${escHtml(cat)}</span>
         <button class="btn btn-ghost btn-sm" onclick="openNoteEdit(${n.row})">✏️ 수정</button>
       </div>
-      <div class="note-body">${escHtml(n.body)}</div>
+      <div class="note-body">${linkifyText(n.body)}</div>
       <div class="note-footer">
         <div class="note-tags">${tagsHtml}</div>
         <div style="display:flex;gap:10px;align-items:center;">
@@ -808,6 +808,7 @@ function getType(url){
   return'LINK';
 }
 function escHtml(str){if(!str)return'';return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function linkifyText(str){if(!str)return'';return escHtml(str).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:underline;word-break:break-all;">$1</a>');}
 
 // 기존 localStorage 리뷰 데이터 정리 (v9에서 사용하던 키)
 try{localStorage.removeItem('muse_reviews');}catch(e){}
