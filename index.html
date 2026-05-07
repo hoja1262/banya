@@ -586,7 +586,7 @@ function renderSearchCards(linkItems){
   grid.innerHTML=linkItems.map(item=>{
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
-    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
+    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
   }).join('');
 }
 function clearSearch(){
@@ -604,7 +604,7 @@ function renderCards(items){
   grid.innerHTML=items.map(item=>{
     const realIdx=allItems.indexOf(item);
     const tags=item.tags?item.tags.split(',').map(t=>t.trim()).filter(Boolean):[];
-    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">✏️ 수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
+    return`<div class="card"><div class="card-header"><div class="card-type">${getType(item.url)}</div><div><button class="btn btn-ghost btn-sm" onclick="openEdit(${realIdx})">수정</button></div></div><div class="card-title" onclick="window.open('${escHtml(item.url)}','_blank')">${escHtml(item.title)}</div>${item.memo?`<div class="card-memo">${escHtml(item.memo)}</div>`:''}<div class="card-footer"><div class="card-tags">${tags.map(t=>tagBadgeHtml(t)).join('')}</div><div class="card-date">${item.date||''}</div></div></div>`;
   }).join('');
 }
 
@@ -743,7 +743,7 @@ function renderNotes(notes){
     <div class="note-card">
       <div class="note-card-header">
         <span class="note-category-badge note-cat-${cat}">${icon} ${escHtml(cat)}</span>
-        <button class="btn btn-ghost btn-sm" onclick="openNoteEdit(${n.row})">✏️ 수정</button>
+        <button class="btn btn-ghost btn-sm" onclick="openNoteEdit(${n.row})">수정</button>
       </div>
       <div class="note-body">${linkifyText(n.body)}</div>
       <div class="note-footer">
