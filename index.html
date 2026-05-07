@@ -6,12 +6,12 @@
 <title>지혜의 창</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#ff5c35">
+<meta name="theme-color" content="#1a1714">
 <link rel="apple-touch-icon" href="icon-192.png">
 <style>
   :root {
     --bg:#faf8f4;--bg2:#ffffff;--bg3:#f2efe8;
-    --border:#e5e0d5;--accent:#ff5c35;--accent2:#ff3d12;--accent-soft:#fff0ec;
+    --border:#1a1714;--accent:#1a1714;--accent2:#000000;--accent-soft:#f2efe8;
     --teal:#00b89c;--teal-soft:#e6f9f6;
     --text:#1a1714;--text2:#7a7268;--text3:#b5aea4;--radius:12px;
     --shadow:0 2px 16px rgba(0,0,0,0.06);--shadow-hover:0 8px 32px rgba(0,0,0,0.12);
@@ -25,48 +25,48 @@
   .logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--accent);letter-spacing:-.02em;white-space:nowrap;}
   .logo span{color:var(--text);}
   .search-wrap{flex:1;position:relative;}
-  .search-wrap input{width:100%;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 14px 10px 40px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:all .2s;box-shadow:var(--shadow);}
+  .search-wrap input{width:100%;background:var(--bg2);border:3.5px solid var(--border);border-radius:var(--radius);padding:10px 14px 10px 40px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;outline:none;transition:all .2s;box-shadow:var(--shadow);}
   .search-wrap input:focus{border-color:var(--accent);box-shadow:0 0 0 3px #ff5c3515;}
   .search-wrap input::placeholder{color:#b5aea4;}
   .search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#b5aea4;pointer-events:none;}
 
   .btn{padding:8px 18px;border-radius:var(--radius);border:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;font-size:13px;font-weight:500;transition:all .18s;white-space:nowrap;}
-  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px #ff5c3540;}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.15);}
   .btn-primary:hover{background:var(--accent2);transform:translateY(-1px);}
-  .btn-ghost{background:var(--bg2);color:var(--text2);border:1.5px solid var(--border);}
+  .btn-ghost{background:var(--bg2);color:var(--text2);border:3.5px solid var(--border);}
   .btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
-  .btn-teal{background:var(--teal);color:#fff;box-shadow:0 2px 8px #00b89c40;}
-  .btn-teal:hover{background:#009e86;transform:translateY(-1px);}
+  .btn-teal{background:#a83232;color:#fff;box-shadow:0 2px 8px rgba(168,50,50,0.25);}
+  .btn-teal:hover{background:#8a2828;transform:translateY(-1px);}
   .btn-sm{padding:5px 11px;font-size:12px;}
 
   main{max-width:1100px;margin:0 auto;padding:28px 24px;position:relative;z-index:1;}
 
-  .tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius);padding:4px;width:fit-content;box-shadow:var(--shadow);}
-  .tab{padding:8px 20px;border-radius:9px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text2);transition:all .18s;border:none;background:none;font-family:'Noto Sans KR',sans-serif;}
-  .tab.active{background:var(--accent);color:#fff;box-shadow:0 2px 8px #ff5c3540;}
+  .tabs{display:flex;gap:0;margin-bottom:0;width:fit-content;position:relative;z-index:2;margin-left:24px;}
+  .tab{padding:10px 22px;border-radius:12px 12px 0 0;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .18s;background:var(--bg3);font-family:'Noto Sans KR',sans-serif;border:3.5px solid var(--border);border-bottom:none;margin-right:-3.5px;position:relative;top:3.5px;}
+  .tab.active{background:var(--accent);color:#fff;z-index:3;}
   .tab-content{display:none;}
   .tab-content.active{display:block;}
 
-  .form-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:18px;padding:24px;margin-bottom:28px;box-shadow:var(--shadow);}
+  .form-card{background:var(--bg2);border:3.5px solid var(--border);border-radius:0 18px 18px 18px;padding:24px;margin-bottom:28px;box-shadow:var(--shadow);position:relative;z-index:1;}
   .form-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
   .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
   .form-group{display:flex;flex-direction:column;gap:6px;}
   .form-group.full{grid-column:1/-1;}
   label{font-size:12px;color:var(--text2);font-weight:500;}
-  input[type="text"],input[type="url"],textarea{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:10px 13px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;transition:all .18s;outline:none;resize:none;width:100%;}
-  input:focus,textarea:focus{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px #ff5c3510;}
+  input[type="text"],input[type="url"],textarea{background:var(--bg3);border:none;border-radius:10px;padding:10px 13px;color:var(--text);font-family:'Noto Sans KR',sans-serif;font-size:14px;transition:all .18s;outline:none;resize:none;width:100%;}
+  input:focus,textarea:focus{background:var(--bg2);box-shadow:0 0 0 2px var(--accent);}
   input::placeholder,textarea::placeholder{color:#b5aea4;}
 
   .auto-tags-preview{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
   .auto-tag-badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;color:#fff;}
 
   .tag-input-wrap{position:relative;}
-  .tag-input-box{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:7px 10px;min-height:44px;cursor:text;transition:all .18s;}
-  .tag-input-box:focus-within{border-color:var(--accent);background:var(--bg2);box-shadow:0 0 0 3px #ff5c3510;}
+  .tag-input-box{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg3);border:none;border-radius:10px;padding:7px 10px;min-height:44px;cursor:text;transition:all .18s;}
+  .tag-input-box:focus-within{background:var(--bg2);box-shadow:0 0 0 2px var(--accent);}
   .tag-pill{display:flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600;color:#fff;}
   .tag-pill .remove{cursor:pointer;opacity:.7;font-size:14px;line-height:1;background:none;border:none;color:inherit;padding:0;}
   .tag-input-real{border:none!important;background:transparent!important;padding:2px 4px!important;min-width:80px;flex:1;font-size:13px;outline:none;color:var(--text);}
-  .tag-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius);max-height:200px;overflow-y:auto;display:none;z-index:400;box-shadow:var(--shadow-hover);}
+  .tag-dropdown{position:absolute;top:calc(100% + 6px);left:0;right:0;background:var(--bg2);border:3.5px solid var(--border);border-radius:var(--radius);max-height:200px;overflow-y:auto;display:none;z-index:400;box-shadow:var(--shadow-hover);}
   .tag-dropdown.show{display:block;}
   .tag-dropdown-item{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;transition:background .1s;font-size:13px;color:var(--text);}
   .tag-dropdown-item:hover{background:var(--bg3);}
@@ -74,14 +74,14 @@
   .tag-cnt{margin-left:auto;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;}
   .form-actions{display:flex;justify-content:flex-end;margin-top:12px;}
 
-  .search-mode-banner{display:none;align-items:center;justify-content:space-between;background:var(--accent-soft);border:1.5px solid #ffcfbf;border-radius:12px;padding:10px 16px;margin-bottom:16px;}
+  .search-mode-banner{display:none;align-items:center;justify-content:space-between;background:var(--accent-soft);border:3.5px solid var(--border);border-radius:12px;padding:10px 16px;margin-bottom:16px;}
   .search-mode-banner.show{display:flex;}
   .search-mode-text{font-size:13px;color:var(--accent);font-weight:600;}
   .search-mode-clear{font-size:12px;color:var(--accent);cursor:pointer;text-decoration:underline;background:none;border:none;font-family:'Noto Sans KR',sans-serif;}
 
   .filter-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;align-items:center;}
   .filter-label{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;font-weight:500;}
-  .filter-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text2);background:var(--bg2);border:1.5px solid var(--border);cursor:pointer;transition:all .18s;box-shadow:var(--shadow);}
+  .filter-chip{display:flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;color:var(--text2);background:var(--bg2);border:3.5px solid var(--border);cursor:pointer;transition:all .18s;box-shadow:var(--shadow);}
   .filter-chip .chip-dot{width:6px;height:6px;border-radius:50%;}
   .filter-chip:hover{border-color:var(--accent);color:var(--accent);}
   .filter-chip.active{color:#fff;border-color:transparent;}
@@ -89,7 +89,7 @@
   .count-label{font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:16px;}
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
 
-  .card{background:var(--bg2);border:1.5px solid var(--border);border-radius:18px;padding:18px;transition:all .2s;position:relative;box-shadow:var(--shadow);}
+  .card{background:var(--bg2);border:3.5px solid var(--border);border-radius:18px;padding:18px;transition:all .2s;position:relative;box-shadow:var(--shadow);}
   .card:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:var(--shadow-hover);}
   .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
   .card-type{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:.1em;text-transform:uppercase;background:var(--accent-soft);padding:3px 8px;border-radius:6px;}
@@ -110,16 +110,17 @@
 
 
   /* 메모 */
-  .note-category-select{background:var(--bg2);border:1.5px solid var(--border);border-radius:var(--radius);padding:10px 14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:all .2s;}
-  .note-category-select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #ff5c3515;}
-  .note-card{background:var(--bg2);border:1.5px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow);margin-bottom:14px;transition:all .18s;}
+  .note-category-select{background:var(--bg3);border:none;border-radius:var(--radius);padding:10px 14px;font-family:'Noto Sans KR',sans-serif;font-size:14px;color:var(--text);outline:none;cursor:pointer;transition:all .2s;}
+  .note-category-select:focus{background:var(--bg2);box-shadow:0 0 0 2px var(--accent);}
+  .note-card{background:var(--bg2);border:3.5px solid var(--border);border-radius:18px;padding:20px;box-shadow:var(--shadow);margin-bottom:14px;transition:all .18s;}
   .note-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-2px);}
   .note-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:12px;}
   .note-card-title{font-size:15px;font-weight:600;color:var(--text);flex:1;line-height:1.4;}
   .note-category-badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
-  .note-cat-아이디어{background:#fff0ec;color:#ff5c35;}
-  .note-cat-명언{background:#e8f1ff;color:#3b82f6;}
-  .note-cat-영감{background:#f3efff;color:#6c5ce7;}
+  .note-cat-아이디어{background:var(--bg3);color:var(--text);}
+  .note-cat-명언{background:var(--bg3);color:var(--text);}
+  .note-cat-영감{background:var(--bg3);color:var(--text);}
+  .note-cat-음식{background:var(--bg3);color:var(--text);}
   .note-cat-일반{background:var(--bg3);color:var(--text2);}
   .note-body{font-size:13px;color:var(--text);line-height:1.6;white-space:pre-wrap;word-break:break-word;margin-bottom:10px;}
   .note-footer{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap;}
@@ -133,16 +134,16 @@
   /* 모달 */
   .modal-overlay{position:fixed;inset:0;background:rgba(26,23,20,0.5);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
   .modal-overlay.show{display:flex;}
-  .modal{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;padding:28px;width:500px;max-width:92vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
+  .modal{background:var(--bg2);border:3.5px solid var(--border);border-radius:20px;padding:28px;width:500px;max-width:92vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.15);}
   .modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:20px;color:var(--text);}
   .modal-group{margin-bottom:14px;display:flex;flex-direction:column;gap:6px;}
   .modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:20px;}
 
   /* 리마인드 */
-  .remind-toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:1.5px solid var(--teal);border-radius:18px;padding:20px 22px;max-width:300px;z-index:999;display:none;box-shadow:0 12px 48px rgba(0,184,156,0.15);}
+  .remind-toast{position:fixed;bottom:24px;right:24px;background:var(--bg2);border:3.5px solid var(--border);border-radius:18px;padding:20px 22px;max-width:300px;z-index:999;display:none;box-shadow:0 12px 48px rgba(0,0,0,0.15);}
   .remind-toast.show{display:block;animation:slideUp .25s ease;}
   @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-  .remind-label{font-size:11px;color:var(--teal);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.08em;margin-bottom:8px;}
+  .remind-label{font-size:11px;color:var(--text);font-family:'Syne',sans-serif;font-weight:700;letter-spacing:.08em;margin-bottom:8px;}
   .remind-title{font-size:14px;font-weight:600;margin-bottom:6px;color:var(--text);line-height:1.4;}
   .remind-memo{font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.5;}
   .remind-actions{display:flex;gap:7px;align-items:center;}
@@ -150,7 +151,7 @@
   .remind-queue{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-left:auto;}
 
   .status-msg{text-align:center;padding:60px 20px;color:var(--text2);font-size:14px;}
-  .toast-msg{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:999;display:none;box-shadow:0 4px 16px #ff5c3540;}
+  .toast-msg{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:500;z-index:999;display:none;box-shadow:0 4px 16px rgba(0,0,0,0.15);}
   .toast-msg.show{display:block;}
   .loading{display:inline-block;width:13px;height:13px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
   @keyframes spin{to{transform:rotate(360deg)}}
@@ -171,14 +172,14 @@
       <span class="search-icon">🔍</span>
       <input type="text" id="global-search" placeholder="전체 검색 — 링크, 파일, 태그 모두..." oninput="globalSearch(this.value)" autocomplete="off">
     </div>
-    <button class="btn btn-teal" onclick="showRemind()">✦ 리마인드</button>
+    <button class="btn btn-teal" onclick="showRemind()">🔥 리마인드 🔥</button>
   </div>
 </div>
 
 <main>
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('links',this)">🔗 링크 / 아이디어</button>
-    <button class="tab" onclick="switchTab('notes',this)">📝 메모</button>
+    <button class="tab active" onclick="switchTab('links',this)">링크 / 아이디어</button>
+    <button class="tab" onclick="switchTab('notes',this)">메모</button>
   </div>
 
   <!-- 링크 탭 -->
@@ -234,6 +235,7 @@
             <option value="아이디어">💡 아이디어</option>
             <option value="명언">💬 명언</option>
             <option value="영감">✨ 영감</option>
+            <option value="음식">🍔 음식</option>
             <option value="일반">📝 일반</option>
           </select>
         </div>
@@ -295,6 +297,7 @@
         <option value="아이디어">💡 아이디어</option>
         <option value="명언">💬 명언</option>
         <option value="영감">✨ 영감</option>
+        <option value="음식">🍔 음식</option>
         <option value="일반">📝 일반</option>
       </select>
     </div>
@@ -637,8 +640,8 @@ document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target==
 
 // ── 메모 ──
 let allNotes=[],notesLoaded=false,activeNoteCategory=null,currentNoteTags=[],editNoteTags=[];
-const NOTE_CATEGORIES=['아이디어','명언','영감','일반'];
-const NOTE_CAT_ICONS={'아이디어':'💡','명언':'💬','영감':'✨','일반':'📝'};
+const NOTE_CATEGORIES=['아이디어','명언','영감','음식','일반'];
+const NOTE_CAT_ICONS={'아이디어':'💡','명언':'💬','영감':'✨','음식':'🍔','일반':'📝'};
 
 // 메모 태그 입력
 function onNoteTagInput(val){showTagDropdown('nt-tag-dropdown',val,currentNoteTags,addNoteTag);}
@@ -662,17 +665,33 @@ async function saveNote(){
   const category=document.getElementById('nt-category').value;
   const tags=currentNoteTags.join(', ');
   if(!body){showToast('메모 내용을 입력해주세요');return;}
-  const btn=document.getElementById('note-save-btn');btn.textContent='저장 중...';btn.disabled=true;
   const date=new Date().toISOString().slice(0,10);
+
+  // 1. 화면 즉시 추가 (서버 응답 안 기다림)
+  const newNote={body,category,tags,date,row:-1,_pending:true};
+  allNotes.unshift(newNote);
+  if(tags)tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));
+  notesLoaded=true;
+  renderNoteCategoryTabs();
+  renderNotes(activeNoteCategory?allNotes.filter(n=>n.category===activeNoteCategory):allNotes);
+
+  // 2. 폼 즉시 비우기
+  document.getElementById('nt-body').value='';
+  document.getElementById('nt-category').value='아이디어';
+  currentNoteTags=[];renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');
+  showToast('✓ 저장 중...');
+
+  // 3. 백그라운드 저장
   try{
     await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'saveNote',title:'',body,category,tags,date})});
-    document.getElementById('nt-body').value='';
-    document.getElementById('nt-category').value='아이디어';
-    currentNoteTags=[];renderTagPills('nt-tag-box',currentNoteTags,'removeNoteTag');
-    showToast('✓ 저장되었습니다');
-    setTimeout(loadNotes,1000);
-  }catch(e){showToast('저장 실패.');}
-  btn.textContent='저장하기';btn.disabled=false;
+    showToast('✓ 저장 완료');
+    // row 번호 받으려면 다시 로드 필요 (수정/삭제용)
+    setTimeout(loadNotes,500);
+  }catch(e){
+    const idx=allNotes.indexOf(newNote);
+    if(idx>-1){allNotes.splice(idx,1);renderNotes(allNotes);}
+    showToast('⚠ 저장 실패');
+  }
 }
 
 // 메모 불러오기
@@ -743,11 +762,25 @@ function renderNotes(notes){
 // 메모 삭제
 async function deleteNote(row){
   if(!confirm('이 메모를 삭제하시겠습니까?'))return;
+
+  // 1. 화면에서 즉시 제거
+  const idx=allNotes.findIndex(n=>n.row===row);
+  let removedNote=null;
+  if(idx>-1){removedNote=allNotes.splice(idx,1)[0];}
+  renderNoteCategoryTabs();
+  renderNotes(activeNoteCategory?allNotes.filter(n=>n.category===activeNoteCategory):allNotes);
+  showToast('✓ 삭제 중...');
+
+  // 2. 백그라운드 삭제
   try{
     await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'deleteNote',row})});
-    showToast('✓ 삭제되었습니다');
-    setTimeout(loadNotes,1000);
-  }catch(e){showToast('삭제 실패.');}
+    showToast('✓ 삭제 완료');
+  }catch(e){
+    // 실패 시 복구
+    if(removedNote)allNotes.splice(idx,0,removedNote);
+    renderNotes(allNotes);
+    showToast('⚠ 삭제 실패');
+  }
 }
 
 // ── 메모 수정 모달 ──
@@ -768,12 +801,25 @@ async function saveNoteEdit(){
   const category=document.getElementById('edit-nt-category').value;
   const tags=editNoteTags.join(', ');
   if(!body){showToast('메모 내용을 입력해주세요');return;}
+
+  // 1. 화면 즉시 갱신
+  const note=allNotes.find(n=>n.row===row);
+  if(note){
+    note.body=body;
+    note.category=category;
+    note.tags=tags;
+    if(tags)tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));
+    renderNoteCategoryTabs();
+    renderNotes(activeNoteCategory?allNotes.filter(n=>n.category===activeNoteCategory):allNotes);
+  }
+  closeNoteModal();
+  showToast('✓ 수정 중...');
+
+  // 2. 백그라운드 저장
   try{
     await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'updateNote',row,body,category,tags})});
-    closeNoteModal();
-    showToast('✓ 수정되었습니다');
-    setTimeout(loadNotes,1000);
-  }catch(e){showToast('수정 실패.');}
+    showToast('✓ 수정 완료');
+  }catch(e){showToast('⚠ 수정 실패');}
 }
 document.getElementById('edit-note-modal').addEventListener('click',e=>{if(e.target===document.getElementById('edit-note-modal'))closeNoteModal();});
 
