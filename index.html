@@ -37,6 +37,8 @@
   .btn-ghost:hover{background:var(--accent2);}
   .modal .btn-ghost{background:var(--bg2);color:var(--text2);}
   .modal .btn-ghost:hover{background:var(--bg3);color:var(--text);}
+  .btn-danger{background:#a83232;color:#fff;border:3.5px solid var(--border);}
+  .btn-danger:hover{background:#8a2828;}
   .btn-teal{background:#a83232;color:#fff;box-shadow:0 2px 8px rgba(168,50,50,0.25);}
   .btn-teal:hover{background:#8a2828;transform:translateY(-1px);}
   .btn-sm{padding:5px 11px;font-size:12px;}
@@ -226,7 +228,7 @@
     </div>
     <div class="count-label" id="count-label"></div>
     <div class="grid" id="content-grid"><div class="status-msg"><span class="loading"></span> 불러오는 중...</div></div>
-    <div id="show-all-wrap" style="display:none;text-align:center;margin:8px 0 24px;"><button class="filter-toggle-btn" id="show-all-btn" onclick="expandFilterRow()" style="font-size:12px;color:var(--text2);">전체 보기 →</button></div>
+    <div id="show-all-wrap" style="display:none;text-align:center;margin:8px 0 24px;"><button class="filter-toggle-btn" id="show-all-btn" onclick="showMore()" style="font-size:12px;color:var(--text2);">더보기 →</button></div>
   </div>
 
   <!-- 파일 탭 -->
@@ -288,6 +290,8 @@
     <div class="modal-group"><label>메모</label><textarea id="edit-memo" rows="3"></textarea></div>
     <div class="modal-meta" id="edit-date-info"></div>
     <div class="modal-actions">
+      <button class="btn btn-danger" onclick="deleteFromEdit()">삭제</button>
+      <div style="flex:1"></div>
       <button class="btn btn-ghost" onclick="closeModal()">취소</button>
       <button class="btn btn-primary" onclick="saveEdit()">저장</button>
     </div>
@@ -320,6 +324,8 @@
     <div class="modal-group"><label>메모</label><textarea id="edit-nt-body" rows="5"></textarea></div>
     <div class="modal-meta" id="edit-note-date-info"></div>
     <div class="modal-actions">
+      <button class="btn btn-danger" onclick="deleteNoteFromEdit()">삭제</button>
+      <div style="flex:1"></div>
       <button class="btn btn-ghost" onclick="closeNoteModal()">취소</button>
       <button class="btn btn-primary" onclick="saveNoteEdit()">저장</button>
     </div>
@@ -347,7 +353,7 @@ const TAG_COLORS=['#ff5c35','#00b89c','#6c5ce7','#f59e0b','#3b82f6','#ec4899','#
 const tagColorMap={};
 function getTagColor(tag){if(!tagColorMap[tag])tagColorMap[tag]=TAG_COLORS[Object.keys(tagColorMap).length%TAG_COLORS.length];return tagColorMap[tag];}
 
-let allItems=[],activeTagFilters=[],currentTags=[],editTags=[];
+let allItems=[],activeTagFilters=[],currentTags=[],editTags=[],currentLimit=4;
 
 // ── 리마인드 큐 ──
 let remindQueue=[];
@@ -519,7 +525,7 @@ document.addEventListener('click',e=>{
       fr.classList.add('collapsed');
       document.getElementById('main-tabs').style.display='';
       // 필터 적용 안 됐을 때만 다시 5개로 (필터 적용 중이면 그대로 유지)
-      if(!activeTagFilters.length)renderCards(allItems,{limit:4});
+      if(!activeTagFilters.length){currentLimit=4;renderCards(allItems,{limit:currentLimit});}
       renderFilterTags();
     }
   }
@@ -538,7 +544,7 @@ async function saveContent(){
   const newItem={url,title,tags,date,memo,_pending:true};
   allItems.unshift(newItem);
   if(newItem.tags)newItem.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));
-  renderFilterTags();renderCards(allItems,{limit:4});
+  renderFilterTags();renderCards(allItems,{limit:currentLimit});
 
   // 2. 폼 즉시 비우기
   document.getElementById('inp-url').value='';
@@ -557,7 +563,7 @@ async function saveContent(){
   }catch(e){
     // 실패: 추가했던 항목 제거 + 토스트
     const idx=allItems.indexOf(newItem);
-    if(idx>-1){allItems.splice(idx,1);renderCards(allItems,{limit:4});}
+    if(idx>-1){allItems.splice(idx,1);renderCards(allItems,{limit:currentLimit});}
     showToast('⚠ 저장 실패. 다시 시도해주세요');
   }
 }
@@ -571,7 +577,7 @@ async function loadContent(){
     if(cached){
       allItems=JSON.parse(cached);
       allItems.forEach(item=>{if(item.tags)item.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));});
-      renderFilterTags();renderCards(allItems,{limit:4});
+      renderFilterTags();renderCards(allItems,{limit:currentLimit});
       hasCachedData=true;
     }
   }catch(e){}
@@ -584,7 +590,7 @@ async function loadContent(){
     const res=await fetch(API+'?action=get');
     allItems=await res.json();allItems.reverse();
     allItems.forEach(item=>{if(item.tags)item.tags.split(',').map(t=>t.trim()).filter(Boolean).forEach(t=>getTagColor(t));});
-    activeTagFilters=[];renderFilterTags();renderCards(allItems,{limit:4});
+    activeTagFilters=[];renderFilterTags();renderCards(allItems,{limit:currentLimit});
     // 3. 새 데이터를 캐시에 저장
     try{localStorage.setItem('muse_items_cache',JSON.stringify(allItems));}catch(e){}
     prefetchRemind();
@@ -634,7 +640,7 @@ function toggleFilterRow(){
   row.classList.toggle('collapsed');
   const collapsed=row.classList.contains('collapsed');
   document.getElementById('main-tabs').style.display=collapsed?'':'none';
-  if(collapsed){renderCards(allItems,{limit:4});}else{renderCards(allItems);}
+  if(collapsed){currentLimit=4;renderCards(allItems,{limit:currentLimit});}else{renderCards(allItems);}
   renderFilterTags();
 }
 function expandFilterRow(){
@@ -645,6 +651,10 @@ function expandFilterRow(){
     renderCards(allItems);
     renderFilterTags();
   }
+}
+function showMore(){
+  currentLimit+=8;
+  renderCards(allItems,{limit:currentLimit});
 }
 
 // ── 검색 ──
@@ -683,7 +693,7 @@ function clearSearch(){
   document.getElementById('global-search').value='';
   document.getElementById('search-banner').classList.remove('show');
   document.getElementById('add-form-card').style.display='';
-  activeTagFilters=[];renderFilterTags();renderCards(allItems,{limit:4});
+  activeTagFilters=[];renderFilterTags();renderCards(allItems,{limit:currentLimit});
 }
 
 // ── 카드 렌더 ──
@@ -734,6 +744,26 @@ async function saveEdit(){
     editTags.forEach(t=>getTagColor(t));renderFilterTags();
     applyTagFilter();
   }catch(e){showToast('수정 실패.');}
+}
+async function deleteFromEdit(){
+  if(!confirm('이 항목을 삭제하시겠습니까?'))return;
+  const idx=parseInt(document.getElementById('edit-idx').value);
+  const rowNum=allItems.length-idx+1;
+  // 화면 즉시 제거
+  const removed=allItems.splice(idx,1)[0];
+  closeModal();
+  renderFilterTags();
+  if(activeTagFilters.length){applyTagFilter();}else{renderCards(allItems,{limit:currentLimit});}
+  showToast('✓ 삭제 중...');
+  try{
+    await fetch(API,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'delete',row:rowNum})});
+    showToast('✓ 삭제 완료');
+    try{localStorage.setItem('muse_items_cache',JSON.stringify(allItems));}catch(e){}
+  }catch(e){
+    allItems.splice(idx,0,removed);
+    renderCards(allItems,{limit:currentLimit});
+    showToast('⚠ 삭제 실패');
+  }
 }
 document.getElementById('edit-modal').addEventListener('click',e=>{if(e.target===document.getElementById('edit-modal'))closeModal();});
 
@@ -855,6 +885,11 @@ function renderNotes(notes){
 }
 
 // 메모 삭제
+function deleteNoteFromEdit(){
+  const row=parseInt(document.getElementById('edit-note-row').value);
+  closeNoteModal();
+  deleteNote(row);
+}
 async function deleteNote(row){
   if(!confirm('이 메모를 삭제하시겠습니까?'))return;
 
