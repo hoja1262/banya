@@ -37,7 +37,7 @@
   .btn-ghost:hover{background:var(--accent2);}
   .modal .btn-ghost{background:var(--bg2);color:var(--text2);}
   .modal .btn-ghost:hover{background:var(--bg3);color:var(--text);}
-  .btn-danger{background:#a83232;color:#fff;border:3.5px solid var(--border);}
+  .btn-danger{background:#a83232;color:#fff;border:none;}
   .btn-danger:hover{background:#8a2828;}
   .btn-teal{background:#a83232;color:#fff;box-shadow:0 2px 8px rgba(168,50,50,0.25);}
   .btn-teal:hover{background:#8a2828;transform:translateY(-1px);}
@@ -402,6 +402,7 @@ function closeRemind(){document.getElementById('remind-toast').classList.remove(
 const URL_RULES=[
   {pattern:/youtube\.com|youtu\.be/i,tags:['유튜브']},
   {pattern:/instagram\.com/i,tags:['인스타그램']},
+  {pattern:/threads\.(net|com)/i,tags:['스레드']},
   {pattern:/tiktok\.com/i,tags:['틱톡']},
   {pattern:/pinterest\.|pin\.it/i,tags:['핀터레스트','이미지']},
   {pattern:/twitter\.com|x\.com/i,tags:['트위터']},
@@ -423,7 +424,7 @@ const URL_RULES=[
 ];
 const ALL_AUTO_TAGS=new Set(URL_RULES.flatMap(r=>r.tags));
 // 카드 타입과 중복되는 플랫폼 태그 (카드에 안 보이게, 검색/필터는 됨)
-const HIDDEN_TAGS=new Set(['유튜브','인스타그램','틱톡','핀터레스트','트위터','페이스북','비메오','블로그','브런치','미디엄','노션','구글문서','비핸스','드리블']);
+const HIDDEN_TAGS=new Set(['유튜브','인스타그램','스레드','틱톡','핀터레스트','트위터','페이스북','비메오','블로그','브런치','미디엄','노션','구글문서','비핸스','드리블']);
 function detectTagsFromUrl(url){if(!url)return[];const d=new Set();URL_RULES.forEach(r=>{if(r.pattern.test(url))r.tags.forEach(t=>d.add(t));});return[...d];}
 
 function onUrlInput(url){
@@ -975,6 +976,7 @@ function getType(url){
   if(!url)return'LINK';
   if(/youtube\.com|youtu\.be/i.test(url))return'YOUTUBE';
   if(/instagram\.com/i.test(url))return'INSTAGRAM';
+  if(/threads\.(net|com)/i.test(url))return'THREADS';
   if(/tiktok\.com/i.test(url))return'TIKTOK';
   if(/pinterest\./i.test(url))return'PINTEREST';
   if(/twitter\.com|x\.com/i.test(url))return'TWITTER';
