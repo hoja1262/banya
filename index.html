@@ -248,6 +248,23 @@
   }
   .tag-pill .tag-x{cursor:pointer;opacity:.7;padding:0 2px;}
   .tag-pill .tag-x:hover{opacity:1;}
+  .tag-pill .remove{
+    all:unset;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:14px;
+    height:14px;
+    margin-left:2px;
+    border-radius:50%;
+    background:rgba(255,255,255,.25);
+    color:#fff;
+    font-size:11px;
+    line-height:1;
+    cursor:pointer;
+    transition:background .15s;
+  }
+  .tag-pill .remove:hover{background:rgba(255,255,255,.45);}
 
   /* ─────── 태그 드롭다운 ─────── */
   .tag-dropdown{
@@ -1012,7 +1029,7 @@ function addEditTag(tag){tag=tag.trim();if(!tag||editTags.includes(tag))return;e
 function removeEditTag(i){editTags.splice(i,1);renderTagPills('edit-tag-box',editTags,'removeEditTag');}
 function showTagDropdown(ddId,val,excludeTags,addFunc){
   const dd=document.getElementById(ddId);const tagMap=getTagMap();
-  const sorted=Object.entries(tagMap).sort((a,b)=>b[1]-a[1]);
+  const sorted=Object.entries(tagMap).sort((a,b)=>a[0].localeCompare(b[0],'ko'));
   const filtered=sorted.filter(([t])=>!excludeTags.includes(t)&&(!val||t.includes(val)));
   if(!filtered.length){dd.classList.remove('show');return;}
   dd.innerHTML=filtered.map(([tag,cnt])=>`<div class="tag-dropdown-item" onclick="${addFunc.name}('${tag}')"><span class="tag-dot" style="background:${getTagColor(tag)}"></span><span>${escHtml(tag)}</span><span class="tag-cnt">${cnt}</span></div>`).join('');
@@ -1122,7 +1139,7 @@ async function loadContent(){
 
 // ── 필터 ──
 function renderFilterTags(){
-  const tagMap=getTagMap();const sorted=Object.entries(tagMap).sort((a,b)=>b[1]-a[1]);
+  const tagMap=getTagMap();const sorted=Object.entries(tagMap).sort((a,b)=>a[0].localeCompare(b[0],'ko'));
   const row=document.getElementById('filter-row');
   const collapsed=row.classList.contains('collapsed');
   if(collapsed){row.innerHTML='';return;}
